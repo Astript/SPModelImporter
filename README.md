@@ -1,0 +1,2 @@
+# SPModelImporter
+SubstancePainterから出力したモデル群をUnityでセットアップするスクリプト
