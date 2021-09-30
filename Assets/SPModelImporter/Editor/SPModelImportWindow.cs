@@ -2,16 +2,13 @@
 using UnityEditor;
 using UnityEngine;
 
-namespace SPModelImporter.Scripts.Editor
+namespace SPModelImporter.Editor
 {
     public class SPModelImportWindow : EditorWindow
     {
-      
-
         [MenuItem("SPModelImporter/Import Model")]
         public static void OpenFile()
         {
-            
             SPModelSetting Setting = SPModelSetting.GetOrCreate();
             // モデルファイルのパス
             var sourceFile = EditorUtility.OpenFilePanel("Select Model file", "", "fbx");

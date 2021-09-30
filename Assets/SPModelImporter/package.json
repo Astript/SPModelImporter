@@ -1,0 +1,11 @@
+{
+  "name": "com.astript.spmodelimporter",
+  "displayName": "SPModelImporter",
+  "version": "0.0.0",
+  "unity": "2020.3",
+  "description": "description.",
+  "author": {
+    "name": "Taku"
+  },
+  "unityRelease": "6f1"
+}

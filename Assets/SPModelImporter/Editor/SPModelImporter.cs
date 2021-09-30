@@ -4,7 +4,7 @@ using System.IO;
 using UnityEditor;
 using UnityEngine;
 
-namespace SPModelImporter.Scripts.Editor
+namespace SPModelImporter.Editor
 {
     public class SPModelImporter : AssetPostprocessor
     {

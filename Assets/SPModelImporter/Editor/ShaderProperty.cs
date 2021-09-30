@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace SPModelImporter.Scripts.Editor
+namespace SPModelImporter.Editor
 {
     public static class ShaderProperty
     {

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace SPModelImporter.Scripts.Editor
+namespace SPModelImporter.Editor
 {
     [Serializable]
     public class SPTempData

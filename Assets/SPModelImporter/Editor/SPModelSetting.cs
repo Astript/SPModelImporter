@@ -3,7 +3,7 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-namespace SPModelImporter.Scripts.Editor
+namespace SPModelImporter.Editor
 {
     [CreateAssetMenu(menuName = "SPModelImporter/Setting", fileName = "SPModelSetting")]
     public class SPModelSetting : ScriptableObject
