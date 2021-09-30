@@ -1,2 +1,8 @@
 # SPModelImporter
 SubstancePainterから出力したモデル群をUnityでセットアップするスクリプト
+現在 : URPにのみ対応
+
+## Usage
+ProjectSettings>SPModelImporterのタブから設定を変えることができます。
+
+SPModelImporter/import ModelからFbxモデルを選択することでマテリアル等が設定済みのモデルがインポートできます。
