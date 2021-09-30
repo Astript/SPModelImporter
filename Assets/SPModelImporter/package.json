@@ -1,11 +1,11 @@
 {
   "name": "com.astript.spmodelimporter",
   "displayName": "SPModelImporter",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "unity": "2020.3",
-  "description": "description.",
+  "description": " Model of SubstancePainter importer",
   "author": {
-    "name": "Taku"
+    "name": "Astript"
   },
   "unityRelease": "6f1"
 }
