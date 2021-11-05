@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.IO;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -32,7 +33,14 @@ namespace SPModelImporter.Editor
 
         internal static SPModelSetting GetOrCreate()
         {
-            var settings = AssetDatabase.LoadAssetAtPath<SPModelSetting>(SPSettingsProvider.PATH);
+            SPModelSetting settings = null;
+            var path = $"{Application.dataPath}/Settings/";
+            if (Directory.Exists(path))
+                settings = AssetDatabase.LoadAssetAtPath<SPModelSetting>(SPSettingsProvider.PATH);
+            else
+                Directory.CreateDirectory(path);
+            
+
             if (settings == null)
             {
                 settings = ScriptableObject.CreateInstance<SPModelSetting>();
