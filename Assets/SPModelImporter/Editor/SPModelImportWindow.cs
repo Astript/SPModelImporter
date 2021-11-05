@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using SPModelImporter.Editor;
 using UnityEditor;
 using UnityEngine;
 
@@ -9,12 +10,14 @@ namespace SPModelImporter.Editor
         [MenuItem("SPModelImporter/Import Model")]
         public static void OpenFile()
         {
-            SPModelSetting Setting = SPModelSetting.GetOrCreate();
+            SPModelSetting setting = SPModelSetting.GetOrCreate();
             // モデルファイルのパス
-            var sourceFile = EditorUtility.OpenFilePanel("Select Model file", "", "fbx");
+            var sourceFile = EditorUtility.OpenFilePanel("Select Model file", "", "fbx,obj");
             var sourceDir = Path.GetDirectoryName(sourceFile);
-            var saveDir = $"{Application.dataPath}{Setting.saveDir.Replace("Assets", "")}/{Path.GetFileNameWithoutExtension(sourceFile)}";
-            var saveFile = $"{Application.dataPath}{Setting.saveDir.Replace("Assets", "")}/{Path.GetFileNameWithoutExtension(sourceFile)}/{Path.GetFileName(sourceFile)}";
+            var saveDir =
+                $"{Application.dataPath}{setting.saveDir.Replace("Assets", "")}/{Path.GetFileNameWithoutExtension(sourceFile)}";
+            var saveFile =
+                $"{Application.dataPath}{setting.saveDir.Replace("Assets", "")}/{Path.GetFileNameWithoutExtension(sourceFile)}/{Path.GetFileName(sourceFile)}";
             var jsonPath = @$"{saveDir}/autogenerate.json";
             // モデル名のディレクトリの作成
             if (!Directory.Exists(saveDir)) Directory.CreateDirectory(saveDir);
@@ -22,14 +25,14 @@ namespace SPModelImporter.Editor
 
             // Jsonデータの作成
             var json = JsonUtility.ToJson(
-                new SPTempData(
+                new SPData(
                     sourceDir,
-                    Setting.baseColorPrefix,
-                    Setting.metallicPrefix,
-                    Setting.normalPrefix,
-                    Setting.heightPrefix,
-                    Setting.aoPrefix));
-            
+                    setting.baseColorPrefix,
+                    setting.metallicPrefix,
+                    setting.normalPrefix,
+                    setting.heightPrefix,
+                    setting.aoPrefix));
+
             // モデルのファイルをコピーしてくる
             if (File.Exists(saveFile))
             {
@@ -37,11 +40,11 @@ namespace SPModelImporter.Editor
                 {
                     File.Delete(saveFile);
                     File.Delete(saveFile + ".meta");
-  
                 }
                 else
                     return;
             }
+
             File.WriteAllText(jsonPath, json);
             File.Copy(sourceFile, saveFile);
 

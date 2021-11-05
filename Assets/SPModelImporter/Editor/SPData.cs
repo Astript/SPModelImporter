@@ -3,7 +3,7 @@
 namespace SPModelImporter.Editor
 {
     [Serializable]
-    public class SPTempData
+    public class SPData
     {
         public string SourcePath;
         public string BaseColorPrefix;
@@ -12,7 +12,7 @@ namespace SPModelImporter.Editor
         public string HeightPrefix;
         public string AoPrefix;
 
-        public SPTempData(string sourcePath,
+        public SPData(string sourcePath,
             string baseColorPrefix,
             string metallicPrefix,
             string normalPrefix,

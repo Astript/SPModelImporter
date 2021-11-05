@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using SPModelImporter.Editor;
 using UnityEditor;
 using UnityEngine;
 
@@ -10,7 +11,6 @@ namespace SPModelImporter.Editor
     {
         private static readonly List<string> ProcessedList = new List<string>();
 
-
         /// <summary>
         /// アセットを読み込んだ時に発火する
         /// </summary>
@@ -18,13 +18,15 @@ namespace SPModelImporter.Editor
         /// <param name="deletedAssets"></param>
         /// <param name="movedAssets"></param>
         /// <param name="movedFromAssetPaths"></param>
-        private static void OnPostprocessAllAssets(string[] importedAssets, string[] deletedAssets,
+        private static void OnPostprocessAllAssets(
+            string[] importedAssets,
+            string[] deletedAssets,
             string[] movedAssets,
             string[] movedFromAssetPaths)
         {
             foreach (var path in importedAssets)
             {
-                if (path.EndsWith(".fbx"))
+                if (path.EndsWith(".fbx") || path.EndsWith(".obj"))
                 {
                     if (ProcessedList.Contains(path))
                     {
@@ -45,7 +47,7 @@ namespace SPModelImporter.Editor
                     }
 
                     string json = File.ReadAllText(jsonPath);
-                    var temp = JsonUtility.FromJson<SPTempData>(json);
+                    var temp = JsonUtility.FromJson<SPData>(json);
 
                     if (string.IsNullOrEmpty(json))
                     {
@@ -56,7 +58,7 @@ namespace SPModelImporter.Editor
                     // jsonの削除
                     if (File.Exists(jsonPath)) File.Delete(jsonPath);
                     if (File.Exists(jsonPath + ".meta")) File.Delete(jsonPath + ".meta");
-                    
+
                     // フォルダ
                     var setting = SPModelSetting.GetOrCreate();
                     var sourceTexDir = @$"{temp.SourcePath}\{setting.textureFolderName}";
@@ -96,29 +98,24 @@ namespace SPModelImporter.Editor
             string distTexDir,
             string distMatDir,
             string modelName,
-            SPTempData spTemp,
+            SPData substance,
             string matName)
         {
 #if UNITY_RP_URP
             Material material = new Material(Shader.Find("Universal Render Pipeline/Lit")) { name = matName };
-            var sourceBaseMap = ConvertPrefix(@$"{sourceTexDir}\{spTemp.BaseColorPrefix}", modelName, matName);
-            var sourceHeightMap = ConvertPrefix(@$"{sourceTexDir}\{spTemp.MetallicPrefix}", modelName, matName);
-            var sourceMetallicMap = ConvertPrefix(@$"{sourceTexDir}\{spTemp.MetallicPrefix}", modelName, matName);
-            var sourceNormalMap = ConvertPrefix(@$"{sourceTexDir}\{spTemp.NormalPrefix}", modelName, matName);
-            var sourceRoughnessMap = ConvertPrefix(@$"{sourceTexDir}\{spTemp.HeightPrefix}", modelName, matName);
-            var sourceAoMap = ConvertPrefix(@$"{sourceTexDir}\{spTemp.AoPrefix}", modelName, matName);
+            var sourceBaseMap = ConvertPrefix(@$"{sourceTexDir}\{substance.BaseColorPrefix}", modelName, matName);
+            var sourceHeightMap = ConvertPrefix(@$"{sourceTexDir}\{substance.MetallicPrefix}", modelName, matName);
+            var sourceMetallicMap = ConvertPrefix(@$"{sourceTexDir}\{substance.MetallicPrefix}", modelName, matName);
+            var sourceNormalMap = ConvertPrefix(@$"{sourceTexDir}\{substance.NormalPrefix}", modelName, matName);
+            var sourceRoughnessMap = ConvertPrefix(@$"{sourceTexDir}\{substance.HeightPrefix}", modelName, matName);
+            var sourceAoMap = ConvertPrefix(@$"{sourceTexDir}\{substance.AoPrefix}", modelName, matName);
 
-
-            // マテリアルごとにフォルダを作成
-            if (!Directory.Exists(@$"{distTexDir}\{matName}"))
-                Directory.CreateDirectory(@$"{distTexDir}\{matName}");
-
-            var distBaseMap = ConvertPrefix(@$"{distTexDir}\{matName}\{spTemp.BaseColorPrefix}", modelName, matName);
-            var distHeightMap = ConvertPrefix(@$"{distTexDir}\{matName}\{spTemp.MetallicPrefix}", modelName, matName);
-            var distMetallicMap = ConvertPrefix(@$"{distTexDir}\{matName}\{spTemp.MetallicPrefix}", modelName, matName);
-            var distNormalMap = ConvertPrefix(@$"{distTexDir}\{matName}\{spTemp.NormalPrefix}", modelName, matName);
-            var distRoughnessMap = ConvertPrefix(@$"{distTexDir}\{matName}\{spTemp.HeightPrefix}", modelName, matName);
-            var distAoMap = ConvertPrefix(@$"{distTexDir}\{matName}\{spTemp.AoPrefix}", modelName, matName);
+            var distBaseMap = ConvertPrefix(@$"{distTexDir}\{matName}\{substance.BaseColorPrefix}", modelName, matName);
+            var distHeightMap = ConvertPrefix(@$"{distTexDir}\{matName}\{substance.MetallicPrefix}", modelName, matName);
+            var distMetallicMap = ConvertPrefix(@$"{distTexDir}\{matName}\{substance.MetallicPrefix}", modelName, matName);
+            var distNormalMap = ConvertPrefix(@$"{distTexDir}\{matName}\{substance.NormalPrefix}", modelName, matName);
+            var distRoughnessMap = ConvertPrefix(@$"{distTexDir}\{matName}\{substance.HeightPrefix}", modelName, matName);
+            var distAoMap = ConvertPrefix(@$"{distTexDir}\{matName}\{substance.AoPrefix}", modelName, matName);
             List<Tuple<string, string, int>> maps = new List<Tuple<string, string, int>>();
             maps.Add(new Tuple<string, string, int>(sourceBaseMap, distBaseMap, ShaderProperty.BaseMap));
             maps.Add(new Tuple<string, string, int>(sourceHeightMap, distHeightMap, ShaderProperty.HeightMap));
@@ -127,6 +124,9 @@ namespace SPModelImporter.Editor
             maps.Add(new Tuple<string, string, int>(sourceRoughnessMap, distRoughnessMap, ShaderProperty.RoughnesMap));
             maps.Add(new Tuple<string, string, int>(sourceAoMap, distAoMap, ShaderProperty.AOMap));
 
+            // マテリアルがあった場合ぞれぞれフォルダを作成
+            if (maps.Count > 0 && !Directory.Exists(@$"{distTexDir}\{matName}"))
+                Directory.CreateDirectory(@$"{distTexDir}\{matName}");
 
             foreach (var map in maps)
             {
